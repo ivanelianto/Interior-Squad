@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6d698de4f967b2444b0de1d04cbae119
+timeCreated: 1520938942
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - plane: {instanceID: 0}
+  - wall: {instanceID: 0}
+  - door: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
