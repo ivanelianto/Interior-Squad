@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 43879631}
   - component: {fileID: 43879632}
   m_Layer: 5
-  m_Name: SelectedPlayerState
+  m_Name: SelectedCharacterStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -350,7 +350,7 @@ GameObject:
   - component: {fileID: 62735365}
   - component: {fileID: 62735364}
   m_Layer: 5
-  m_Name: Subtext
+  m_Name: SubPauseText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -546,7 +546,7 @@ GameObject:
   - component: {fileID: 70818748}
   - component: {fileID: 70818747}
   m_Layer: 5
-  m_Name: WaitingText
+  m_Name: PlayerGameplayStateText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -898,7 +898,7 @@ GameObject:
   - component: {fileID: 250252230}
   - component: {fileID: 250252229}
   m_Layer: 5
-  m_Name: TurnState
+  m_Name: MovesText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1926,6 +1926,7 @@ GameObject:
   m_Component:
   - component: {fileID: 708579430}
   - component: {fileID: 708579429}
+  - component: {fileID: 708579431}
   - component: {fileID: 708579434}
   m_Layer: 0
   m_Name: GameManager
@@ -1946,50 +1947,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DevelopmentMode: 0
+  mainCameraLight: {fileID: 2042567230}
+  plane: {fileID: 1049037597801708, guid: 2b31e4310f8d8d24580e420cac6ffad0, type: 2}
+  door: {fileID: 1155424224203576, guid: bf94dd354ffa9aa43acf6585829cfc5e, type: 2}
+  character: {fileID: 1529990040167368, guid: d4b0f9cbd46b1da4da802c720e05ad17, type: 2}
   wall:
   - {fileID: 1921961199535824, guid: 629c3919e242c684eb43c8781a1dbf22, type: 2}
-  characters:
-  - {fileID: 1100055950191940, guid: dc4ba44873c1d054a8dc7f1c0ece45e4, type: 2}
-  - {fileID: 1964413747935914, guid: 7198d341d8e7e354f89191c3e80c1e47, type: 2}
-  - {fileID: 1529990040167368, guid: 5f78a6daafb34fd4a8909db9a7974efc, type: 2}
   obstacles:
   - {fileID: 1640560319499978, guid: 8a9f694dc9a65f84c8cac61b11bd5424, type: 2}
   - {fileID: 1241563662134506, guid: e1cf3bc36285e0844ab565419d2dcc6a, type: 2}
   - {fileID: 1330470143489592, guid: 6e7162b20e8dbef4aaec0b54ca937fc0, type: 2}
   - {fileID: 1658242891828518, guid: 26f0fc9903deac74b83753c485d81a26, type: 2}
   - {fileID: 1501074538661586, guid: ca4db9a21542960498bd83a2bc9095e0, type: 2}
-  plane: {fileID: 1049037597801708, guid: 2b31e4310f8d8d24580e420cac6ffad0, type: 2}
-  door: {fileID: 1155424224203576, guid: bf94dd354ffa9aa43acf6585829cfc5e, type: 2}
-  character: {fileID: 1529990040167368, guid: d4b0f9cbd46b1da4da802c720e05ad17, type: 2}
-  stateCanvas: {fileID: 2136792689}
-  actionMenuUI: {fileID: 891434373}
-  playerStateUI: {fileID: 2147405527}
-  selectedPlayerStateUI: {fileID: 43879630}
-  playerCameraTransform: {fileID: 248838648}
-  gameStateText: {fileID: 1723839058}
-  subGameStateText: {fileID: 62735364}
-  turnStateText: {fileID: 250252229}
-  waitingText: {fileID: 70818747}
-  anyText: {fileID: 559547466}
-  selectedCharacterName: {fileID: 1924344075}
-  hoveredCharacterName: {fileID: 848453991}
-  selectedCharacterHealthBar: {fileID: 1576108201}
-  hoveredCharacterHealthBar: {fileID: 73000350}
-  mainCameraLight: {fileID: 2042567230}
   floorTypeMaterial:
   - {fileID: 2100000, guid: 9b7390c0dc1511344a1da3aebae19bea, type: 2}
   - {fileID: 2100000, guid: c165cbdb27f171c47b26ee62039c6365, type: 2}
-  swatClassMaterial:
-  - {fileID: 2100000, guid: 65e8716aa758853438da15f9a8bdd28f, type: 2}
-  - {fileID: 2100000, guid: c95d1d840a62d064993556a8a96dac3a, type: 2}
-  - {fileID: 2100000, guid: b68f0182e8d276c439ba5562e62c0c44, type: 2}
-  - {fileID: 2100000, guid: 19e30f372fdfdfd4586318ea28aba68e, type: 2}
-  - {fileID: 2100000, guid: 3148fca5bc1d22a429a42959e090e2d5, type: 2}
-  - {fileID: 2100000, guid: 5b2c3ec18e467f04db7db179a604afd4, type: 2}
-  availableMoves: 2
-  maxMoves: 2
-  enemyAvailableMoves: 2
-  enemyMaxMoves: 2
 --- !u!4 &708579430
 Transform:
   m_ObjectHideFlags: 0
@@ -2010,6 +1982,35 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &708579431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 708579428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c605b43c973f7ba46a69740007d9b823, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mainCanvas: {fileID: 2136792689}
+  menuUI: {fileID: 891434373}
+  hoveredCharacterUI: {fileID: 2147405527}
+  selectedCharacterUI: {fileID: 43879630}
+  pauseText: {fileID: 1723839058}
+  subPauseText: {fileID: 62735364}
+  movesText: {fileID: 250252229}
+  playerGameplayStateText: {fileID: 70818747}
+  anyText: {fileID: 559547466}
+  line: {fileID: 708579434}
+  character: {fileID: 1529990040167368, guid: d4b0f9cbd46b1da4da802c720e05ad17, type: 2}
+  swatClassMaterial:
+  - {fileID: 2100000, guid: 65e8716aa758853438da15f9a8bdd28f, type: 2}
+  - {fileID: 2100000, guid: c95d1d840a62d064993556a8a96dac3a, type: 2}
+  - {fileID: 2100000, guid: b68f0182e8d276c439ba5562e62c0c44, type: 2}
+  - {fileID: 2100000, guid: 19e30f372fdfdfd4586318ea28aba68e, type: 2}
+  - {fileID: 2100000, guid: 3148fca5bc1d22a429a42959e090e2d5, type: 2}
+  - {fileID: 2100000, guid: 5b2c3ec18e467f04db7db179a604afd4, type: 2}
 --- !u!120 &708579434
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -3080,7 +3081,7 @@ GameObject:
   - component: {fileID: 1723839059}
   - component: {fileID: 1723839058}
   m_Layer: 5
-  m_Name: GameStateText
+  m_Name: PauseText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3774,7 +3775,7 @@ GameObject:
   - component: {fileID: 2147405528}
   - component: {fileID: 2147405529}
   m_Layer: 5
-  m_Name: PlayerState
+  m_Name: HoveredCharacterStatus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

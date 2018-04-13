@@ -46,7 +46,7 @@ public class LoadingScreenController : MonoBehaviour
     {
         float percent = 0.1f;
 
-        async = SceneManager.LoadSceneAsync(Assets.Scripts.GameSettings.SCENE_HELPER);
+        async = SceneManager.LoadSceneAsync(GameSettings.SCENE_HELPER);
         async.allowSceneActivation = false;
 
         yield return new WaitForSeconds(2);

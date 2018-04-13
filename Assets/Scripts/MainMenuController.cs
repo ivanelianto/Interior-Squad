@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using Assets.Scripts;
 using UnityEngine.PostProcessing;
 using UnityEngine.UI;
 

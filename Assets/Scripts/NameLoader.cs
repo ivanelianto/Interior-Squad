@@ -14,7 +14,7 @@ public class NameLoader : MonoBehaviour
     void Start()
     {
         playerStateUI = GameObject.FindGameObjectWithTag("GameStateCanvas");
-        playerStateUI = playerStateUI.transform.Find("PlayerState").gameObject;
+        playerStateUI = playerStateUI.transform.Find("HoveredCharacterStatus").gameObject;
 
         // Init Action Menu
         actionMenuUI = GameObject.FindGameObjectWithTag("GameStateCanvas").transform.Find("ActionMenu").gameObject;

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Assets;
-using Assets.Scripts;
 using System.Collections;
 
 public class MazeLoader : MonoBehaviour
@@ -17,77 +15,32 @@ public class MazeLoader : MonoBehaviour
 
     public bool DevelopmentMode = false;
 
-    public GameObject[] wall, characters, obstacles;
+    public Light mainCameraLight;
 
     public GameObject plane,
                       door,
-                      character,
-                      stateCanvas,
-                      actionMenuUI,
-                      playerStateUI,
-                      selectedPlayerStateUI;
+                      character;
 
-    public Transform playerCameraTransform;
+    public GameObject[] wall, obstacles;
 
-    public Text gameStateText,
-                subGameStateText,
-                turnStateText,
-                waitingText,
-                anyText,
-                selectedCharacterName,
-                hoveredCharacterName;
-
-    public Slider selectedCharacterHealthBar,
-                  hoveredCharacterHealthBar;
-
-    public Light mainCameraLight;
-
-    public Material[] floorTypeMaterial,
-                      swatClassMaterial;
+    public Material[] floorTypeMaterial;
 
     public Tile[][] map;
 
-    private const int MIN_LENGTH = 4,
+    private const int MIN_LENGTH = 4, // Smallest Room Size
                       OBS_LIGHT = 0,
                       OBS_CHAIR = 1,
                       OBS_TABLE = 2,
                       OBS_SOFA_2 = 3,
                       OBS_SOFA_3 = 4,
-                      LEFT_BUTTON = 0,
-                      RIGHT_BUTTON = 1,
-                      OPERATOR = 0,
-                      SNIPER = 1,
-                      CLOSE_QUARTERS = 2,
-                      HEAD_MATERIAL = 1,
-                      BODY_MATERIAL = 0;
-
-
-    private enum Turn
-    {
-        Player, Enemy
-    }
-
-    Turn turn = Turn.Player;
-
-    public int availableMoves = 2,
-               maxMoves = 2,
-               enemyAvailableMoves = 2,
-               enemyMaxMoves = 2;
-
-    private bool isPaused = false;
+                      HEAD_MATERIAL = 1, // Swat's Head Material Index
+                      BODY_MATERIAL = 0; // Swat's Body Material Index
 
     private Room biggestRoom;
 
-    private List<Room> rooms = new List<Room>();
+    public List<Room> rooms = new List<Room>();
 
     private GameObject tilesWrapper;
-
-    private List<GameObject> players = new List<GameObject>(),
-                             enemies = new List<GameObject>();
-
-    private Vector3 newCameraPosition;
-
-    float scrollSpeed = 15;
 
     void Start()
     {
@@ -110,13 +63,13 @@ public class MazeLoader : MonoBehaviour
         //StartCoroutine(Wrapper());
         InitializeObjectInstant();
 
-        Room playerRoom = InitializePlayers();
+        //Room playerRoom = InitializePlayers();
 
-        InitializeEnemies(playerRoom);
+        //InitializeEnemies(playerRoom);
 
         FlashObjectTile();
 
-        turnStateText.text = "Available Moves : " + availableMoves;
+        StartCoroutine(GetComponent<Gameplay>().StartGamePlay());
     }
 
     private void FlashObjectTile()
@@ -612,101 +565,103 @@ public class MazeLoader : MonoBehaviour
     private Room InitializePlayers()
     {
         // Get Random Room
-        Room room = rooms[UnityEngine.Random.Range(1, rooms.Count)];
+        //Room room = rooms[UnityEngine.Random.Range(1, rooms.Count)];
 
-        int randomX = 0, randomY = 0;
+        //int randomX = 0, randomY = 0;
 
         // When Debugging Directly From This GameScene
-        if (GameSettings.players.Count < 1)
-        {
-            GameSettings.players.AddRange(new int[]
-            {
-                OPERATOR,
-                OPERATOR,
-                SNIPER,
-                CLOSE_QUARTERS
-            });
-        }
+        //if (GameSettings.players.Count < 1)
+        //{
+        //    GameSettings.players.AddRange(new int[]
+        //    {
+        //        Gameplay.OPERATOR,
+        //        Gameplay.OPERATOR,
+        //        Gameplay.SNIPER,
+        //        Gameplay.CLOSE_QUARTERS
+        //    });
+        //}
 
-        GameObject playerWrapper = new GameObject()
-        {
-            name = "Player"
-        };
+        //GameObject playerWrapper = new GameObject()
+        //{
+        //    name = "Player"
+        //};
 
-        foreach (int characterType in GameSettings.players)
-        {
-            // Get Random Floor
-            do
-            {
-                randomY = UnityEngine.Random.Range(room.y + 1, room.y + room.height - 1);
-                randomX = UnityEngine.Random.Range(room.x + 1, room.x + room.width - 1);
-            }
-            while (map[randomY][randomX].swat != null);
+        //foreach (int characterType in GameSettings.players)
+        //{
+        //    // Get Random Floor
+        //    do
+        //    {
+        //        randomY = UnityEngine.Random.Range(room.y + 1, room.y + room.height - 1);
+        //        randomX = UnityEngine.Random.Range(room.x + 1, room.x + room.width - 1);
+        //    }
+        //    while (map[randomY][randomX].swat != null);
 
-            Vector3 characterPosition = map[randomY][randomX].gameObject.transform.position;
+        //    Vector3 characterPosition = 
+                    // map[randomY][randomX].gameObject.transform.position;
 
-            GameObject player = Instantiate(character, characterPosition, Quaternion.identity);
-            player.transform.parent = playerWrapper.transform;
+        //    GameObject player = Instantiate(character, characterPosition, Quaternion.identity);
+        //    player.transform.parent = playerWrapper.transform;
 
-            GameObject head = player.transform.Find("Geo").gameObject.transform.Find("Soldier_head").gameObject,
-                       body = player.transform.Find("Geo").gameObject.transform.Find("Soldier_body").gameObject;
+        //    GameObject head = player.transform.Find("Geo").gameObject.transform.Find("Soldier_head").gameObject,
+        //               body = player.transform.Find("Geo").gameObject.transform.Find("Soldier_body").gameObject;
 
-            Player playerScript = player.GetComponent<Player>();
-            playerScript.characterType = characterType;
+        //    Player playerScript = player.GetComponent<Player>();
+        //    playerScript.characterType = characterType;
 
-            if (characterType == CLOSE_QUARTERS) // Close Quarters
-            {
-                maxMoves += 3;
+        //    if (characterType == Gameplay.CLOSE_QUARTERS) // Close Quarters
+        //    {
+        //        maxMoves += 3;
 
-                body.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + CLOSE_QUARTERS * 2];
-                head.GetComponent<Renderer>().materials[BODY_MATERIAL] = swatClassMaterial[BODY_MATERIAL + CLOSE_QUARTERS * 2];
-                head.GetComponent<Renderer>().materials[HEAD_MATERIAL] = swatClassMaterial[HEAD_MATERIAL + CLOSE_QUARTERS * 2];
+        //        body.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + CLOSE_QUARTERS * 2];
+        //        head.GetComponent<Renderer>().materials[BODY_MATERIAL] = swatClassMaterial[BODY_MATERIAL + CLOSE_QUARTERS * 2];
+        //        head.GetComponent<Renderer>().materials[HEAD_MATERIAL] = swatClassMaterial[HEAD_MATERIAL + CLOSE_QUARTERS * 2];
 
-                SetPlayerIdentity(ref playerScript, "Close Quarters", 4, 20, 35, Int32.MaxValue, 0, 80, 80);
-            }
-            else
-            {
-                maxMoves += 2;
+        //        SetPlayerIdentity(ref playerScript, "Close Quarters", 4, 20, 35, Int32.MaxValue, 0, 80, 80);
+        //    }
+        //    else
+        //    {
+        //        maxMoves += 2;
 
-                if (characterType == OPERATOR)
-                {
-                    body.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + OPERATOR * 2];
-                    head.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + OPERATOR * 2];
+        //        if (characterType == OPERATOR)
+        //        {
+        //            body.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + OPERATOR * 2];
+        //            head.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + OPERATOR * 2];
 
-                    SetPlayerIdentity(ref playerScript, "Operator", 6, 20, 50, Int32.MaxValue, 0, 100, 100);
-                }
-                else if (characterType == SNIPER)
-                {
-                    body.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + SNIPER * 2];
-                    head.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + SNIPER * 2];
+        //            SetPlayerIdentity(ref playerScript, "Operator", 6, 20, 50, Int32.MaxValue, 0, 100, 100);
+        //        }
+        //        else if (characterType == SNIPER)
+        //        {
+        //            body.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + SNIPER * 2];
+        //            head.GetComponent<Renderer>().material = swatClassMaterial[BODY_MATERIAL + SNIPER * 2];
 
-                    SetPlayerIdentity(ref playerScript, "Sniper", 12, 70, 100, 1, 0, 100, 100);
-                }
-            }
+        //            SetPlayerIdentity(ref playerScript, "Sniper", 12, 70, 100, 1, 0, 100, 100);
+        //        }
+        //    }
 
-            map[randomY][randomX].isFilled = true;
-            map[randomY][randomX].swat = player;
-            map[randomY][randomX].swat.GetComponent<Player>().isPlayer = true;
+        //    map[randomY][randomX].isFilled = true;
+        //    map[randomY][randomX].swat = player;
+        //    map[randomY][randomX].swat.GetComponent<Player>().isPlayer = true;
 
-            player.GetComponent<Player>().mazeLoader = this;
+        //    player.GetComponent<Player>().mazeLoader = this;
 
-            Rigidbody[] rigidbodies = player.GetComponentsInChildren<Rigidbody>();
+        //    Rigidbody[] rigidbodies = player.GetComponentsInChildren<Rigidbody>();
 
-            foreach (Rigidbody rb in rigidbodies)
-                rb.isKinematic = true;
+        //    foreach (Rigidbody rb in rigidbodies)
+        //        rb.isKinematic = true;
 
-            // Starting Node
-            player.GetComponent<Player>().currentStandingTile = map[randomY][randomX];
+        //    // Starting Node
+        //    player.GetComponent<Player>().currentStandingTile = map[randomY][randomX];
 
-            players.Add(map[randomY][randomX].swat);
-        }
+        //    players.Add(map[randomY][randomX].swat);
+        //}
 
-        // Initialize availableMoves
-        availableMoves = maxMoves;
+        //// Initialize availableMoves
+        //availableMoves = maxMoves;
 
-        StartCoroutine(PanCameraWrapper(randomX, randomY));
+        //StartCoroutine(PanCameraWrapper(randomX, randomY));
 
-        return room;
+        //return room;
+        return null;
     }
 
     private void SetPlayerIdentity(ref Player playerScript,
@@ -729,403 +684,310 @@ public class MazeLoader : MonoBehaviour
         playerScript.playerHp = currentHp;
     }
 
-    private IEnumerator PanCameraWrapper(int randomX, int randomY)
-    {
-        yield return StartCoroutine(PanCameraToPlayer(map[randomY][randomX].swat));
-
-        if (DevelopmentMode)
-        {
-            Camera.main.transform.position = GameObject.Find("GoodDebugCameraPosition").transform.position;
-            Camera.main.transform.rotation = GameObject.Find("GoodDebugCameraPosition").transform.rotation;
-        }
-    }
-
-    private IEnumerator PanCameraToPlayer(GameObject swat)
-    {
-        float x = swat.transform.position.x - 10;
-        float y = swat.transform.position.y + 30;
-        float z = swat.transform.position.z - 10;
-        newCameraPosition = new Vector3(x, y, z);
-
-        while (Vector3.Distance(Camera.main.transform.position, newCameraPosition) >= 0.01f &&
-               Camera.main.transform.rotation != playerCameraTransform.rotation)
-        {
-            Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, newCameraPosition, Time.deltaTime * 4);
-            Camera.main.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, playerCameraTransform.rotation, Time.deltaTime * 2);
-
-            yield return null;
-        }
-    }
-
-    private void InitializeEnemies(Room roomToExclude)
-    {
-        List<Room> rooms = new List<Room>();
-
-        foreach (Room room in this.rooms)
-        {
-            if (room != roomToExclude)
-                rooms.Add(room);
-        }
-
-        // Get Random Room
-        Room randomEnemyRoom = rooms[UnityEngine.Random.Range(1, rooms.Count)];
-
-        for (int r = randomEnemyRoom.y; r < randomEnemyRoom.y + randomEnemyRoom.height; r++)
-        {
-            for (int c = randomEnemyRoom.x; c < randomEnemyRoom.x + randomEnemyRoom.width; c++)
-            {
-                map[r][c].Flash("#E91E63");
-            }
-        }
-
-        // When Debugging Directly From This GameScene
-        if (GameSettings.players.Count < 1)
-        {
-            GameSettings.players.AddRange(new int[] { 0, 0, 1, 2 });
-        }
-
-        int randomX = 0, randomY = 0;
-
-        foreach (int i in GameSettings.players)
-        {
-            // Get Random Floor
-            do
-            {
-                randomY = UnityEngine.Random.Range(randomEnemyRoom.y + 1, randomEnemyRoom.y + randomEnemyRoom.height - 1);
-                randomX = UnityEngine.Random.Range(randomEnemyRoom.x + 1, randomEnemyRoom.x + randomEnemyRoom.width - 1);
-            }
-            while (map[randomY][randomX].swat != null);
-
-            if (i == 0 || i == 1) // Operator and Sniper
-                maxMoves += 2;
-            else if (i == 2) // Close Quarters
-                maxMoves += 3;
-
-            map[randomY][randomX].isFilled = true;
-
-            GameObject player = Instantiate(characters[i], map[randomY][randomX].gameObject.transform.position, Quaternion.identity);
-            map[randomY][randomX].swat = player;
-            map[randomY][randomX].swat.GetComponent<Player>().isPlayer = false;
-            player.GetComponent<Player>().mazeLoader = this;
-            player.GetComponent<Rigidbody>().isKinematic = true;
-
-            // Buat Cek 5 Disekitar, Jika Tidak Ada Light, Tidak Render
-            //player.GetComponentInChildren<Light>().gameObject.SetActive(false);
-
-            // Starting Node
-            player.GetComponent<Player>().currentStandingTile = map[randomY][randomX];
-
-            enemies.Add(map[randomY][randomX].swat);
-        }
-
-        // Initialize availableMoves
-        enemyAvailableMoves = enemyMaxMoves;
-    }
-
     public void Update()
     {
-        if (turn == Turn.Player)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //if (turn == Turn.Player)
+        //{
+        //    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            RaycastHit hittedSwat, hittedPlane;
+        //    RaycastHit hittedSwat, hittedPlane;
 
-            Player hoveredPlayerScript = null,
-                   selectedPlayerScript = null;
+        //    Player hoveredPlayerScript = null,
+        //           selectedPlayerScript = null;
 
-            #region Hover Player
-            if (Physics.Raycast(ray, out hittedSwat, 1000, LayerMask.GetMask("Swat")))
-            {
-                hoveredSwat = hittedSwat.collider.gameObject;
+        //    #region Hover Player
+        //    if (Physics.Raycast(ray, out hittedSwat, 1000, LayerMask.GetMask("Swat")))
+        //    {
+        //        hoveredSwat = hittedSwat.collider.gameObject;
 
-                hoveredPlayerScript = hoveredSwat.GetComponent<Player>();
+        //        hoveredPlayerScript = hoveredSwat.GetComponent<Player>();
 
-                if (selectedSwat == null &&
-                    selectedSwat != hoveredSwat)
-                {
-                    ShowHoveredPlayerState(hoveredPlayerScript);
-                }
-                else if (selectedSwat != null)
-                {
-                    selectedPlayerScript = selectedPlayerScript;
+        //        if (selectedSwat == null &&
+        //            selectedSwat != hoveredSwat)
+        //        {
+        //            ShowHoveredPlayerState(hoveredPlayerScript);
+        //        }
+        //        else if (selectedSwat != null)
+        //        {
+        //            selectedPlayerScript = selectedPlayerScript;
 
-                    if (selectedPlayerScript.isAttacking || selectedPlayerScript.isThrowingGrenade)
-                        ShowSelectedPlayerState(selectedPlayerScript);
-                }
+        //            if (selectedPlayerScript.isAttacking || selectedPlayerScript.isThrowingGrenade)
+        //                ShowSelectedPlayerState(selectedPlayerScript);
+        //        }
 
-                SetPreviousSwat(hittedSwat);
-            }
-            else if (hoveredSwat != null && !actionMenuUI.activeInHierarchy)
-            {
-                playerStateUI.gameObject.SetActive(false);
-                hoveredSwat = null;
-            }
-            #endregion
+        //        SetPreviousSwat(hittedSwat);
+        //    }
+        //    else if (hoveredSwat != null && !actionMenuUI.activeInHierarchy)
+        //    {
+        //        playerStateUI.gameObject.SetActive(false);
+        //        hoveredSwat = null;
+        //    }
+        //    #endregion
 
-            if (hoveredSwat != null)
-            {
-                #region Variables
-                GameObject geo = hoveredSwat.transform.Find("Geo").gameObject;
+        //    if (hoveredSwat != null)
+        //    {
+        //        #region Variables
+        //        GameObject geo = hoveredSwat.transform.Find("Geo").gameObject;
 
-                Material head = geo.transform.Find("Soldier_head").gameObject.GetComponent<SkinnedMeshRenderer>().material;
+        //        Material head = geo.transform.Find("Soldier_head").gameObject.GetComponent<SkinnedMeshRenderer>().material;
 
-                Material body = geo.transform.Find("Soldier_body").gameObject.GetComponent<SkinnedMeshRenderer>().material;
+        //        Material body = geo.transform.Find("Soldier_body").gameObject.GetComponent<SkinnedMeshRenderer>().material;
 
-                Text movesState = null;
+        //        Text movesState = null;
 
-                Tile targetTile = null;
+        //        Tile targetTile = null;
 
-                bool validCost = true;
-                #endregion
+        //        bool validCost = true;
+        //        #endregion
 
-                if (hoveredPlayerScript.isSelectingTile)
-                {
-                    if (Physics.Raycast(ray, out hittedPlane, 1000, LayerMask.GetMask("Tiles")))
-                    {
-                        targetTile = hittedPlane.collider.GetComponent<Tile>();
+        //        if (hoveredPlayerScript.isSelectingTile)
+        //        {
+        //            if (Physics.Raycast(ray, out hittedPlane, 1000, LayerMask.GetMask("Tiles")))
+        //            {
+        //                targetTile = hittedPlane.collider.GetComponent<Tile>();
 
-                        if (selectedSwat != null &&
-                            !selectedPlayerScript.isAttacking &&
-                            !selectedPlayerScript.isThrowingGrenade &&
-                            selectedPlayerScript.currentStandingTile != targetTile)
-                        {
-                            movesState = stateCanvas.transform.Find("TurnState").GetComponent<Text>();
-                            targetTile.Flash();
-                        }
+        //                if (selectedSwat != null &&
+        //                    !selectedPlayerScript.isAttacking &&
+        //                    !selectedPlayerScript.isThrowingGrenade &&
+        //                    selectedPlayerScript.currentStandingTile != targetTile)
+        //                {
+        //                    movesState = stateCanvas.transform.Find("TurnState").GetComponent<Text>();
+        //                    targetTile.Flash();
+        //                }
 
-                        #region Select Tile To Go
-                        if (hoveredPlayerScript.isMoving)
-                        {
-                            if (targetTile != null)
-                            {
-                                if (targetTile != selectedPlayerScript.currentStandingTile &&
-                                    targetTile != hoveredPlayerScript.currentStandingTile)
-                                {
-                                    StartCoroutine(hoveredPlayerScript.DrawPath(hoveredPlayerScript.currentStandingTile, targetTile));
+        //                #region Select Tile To Go
+        //                if (hoveredPlayerScript.isMoving)
+        //                {
+        //                    if (targetTile != null)
+        //                    {
+        //                        if (targetTile != selectedPlayerScript.currentStandingTile &&
+        //                            targetTile != hoveredPlayerScript.currentStandingTile)
+        //                        {
+        //                            StartCoroutine(hoveredPlayerScript.DrawPath(hoveredPlayerScript.currentStandingTile, targetTile));
 
-                                    if (hoveredPlayerScript.totalCost < availableMoves)
-                                    {
-                                        anyText.text = "Cost : " + hoveredPlayerScript.totalCost;
-                                    }
-                                    else
-                                    {
-                                        if (hoveredPlayerScript.totalCost > availableMoves)
-                                        {
-                                            anyText.text = "Not Enough Moves";
-                                            targetTile.Flash("#FF0000");
-                                        }
-                                        else if (targetTile.isFilled)
-                                        {
-                                            anyText.text = "";
-                                            targetTile.Unflash();
-                                            line.positionCount = 0;
-                                        }
-                                    }
+        //                            if (hoveredPlayerScript.totalCost < availableMoves)
+        //                            {
+        //                                anyText.text = "Cost : " + hoveredPlayerScript.totalCost;
+        //                            }
+        //                            else
+        //                            {
+        //                                if (hoveredPlayerScript.totalCost > availableMoves)
+        //                                {
+        //                                    anyText.text = "Not Enough Moves";
+        //                                    targetTile.Flash("#FF0000");
+        //                                }
+        //                                else if (targetTile.isFilled)
+        //                                {
+        //                                    anyText.text = "";
+        //                                    targetTile.Unflash();
+        //                                    line.positionCount = 0;
+        //                                }
+        //                            }
 
-                                    anyText.gameObject.SetActive(true);
+        //                            anyText.gameObject.SetActive(true);
 
-                                    Vector3 screenPoint = Camera.main.WorldToScreenPoint(targetTile.gameObject.transform.position + Vector3.up * 5 + Vector3.right * 2);
-                                    anyText.transform.position = screenPoint;
-                                }
-                                else
-                                {
-                                    targetTile.Unflash();
-                                    line.positionCount = 0;
-                                }
-                            }
-                        }
+        //                            Vector3 screenPoint = Camera.main.WorldToScreenPoint(targetTile.gameObject.transform.position + Vector3.up * 5 + Vector3.right * 2);
+        //                            anyText.transform.position = screenPoint;
+        //                        }
+        //                        else
+        //                        {
+        //                            targetTile.Unflash();
+        //                            line.positionCount = 0;
+        //                        }
+        //                    }
+        //                }
 
-                        SetPreviousTile(hittedPlane);
-                        #endregion
-                    }
-                }
+        //                SetPreviousTile(hittedPlane);
+        //                #endregion
+        //            }
+        //        }
 
-                if (Input.GetMouseButtonDown(LEFT_BUTTON))
-                {
-                    /* 
-                     * Condition To Make Sure We Don't Click A Player 
-                     * When Wnated To Choose Menu 
-                     */
-                    if (hittedSwat.collider != null &&
-                        !stateCanvas.transform.Find("ActionMenu").gameObject.activeInHierarchy)
-                    {
-                        #region Shooting
-                        if (selectedSwat != null &&
-                            selectedPlayerScript.isAttacking)
-                        {
-                            // Only Can Attack Enemy Validation
-                            if (hoveredSwat != selectedSwat
-                                //&& !hoveredSwat.GetComponent<Player>().isPlayer
-                                )
-                            {
-                                //AudioSource attackSound = selectedSwat.GetComponent<AudioSource>();
-                                //attackSound.Play();
+        //        if (Input.GetMouseButtonDown(LEFT_BUTTON))
+        //        {
+        //            /* 
+        //             * Condition To Make Sure We Don't Click A Player 
+        //             * When Wnated To Choose Menu 
+        //             */
+        //            if (hittedSwat.collider != null &&
+        //                !stateCanvas.transform.Find("ActionMenu").gameObject.activeInHierarchy)
+        //            {
+        //                #region Shooting
+        //                if (selectedSwat != null &&
+        //                    selectedPlayerScript.isAttacking)
+        //                {
+        //                    // Only Can Attack Enemy Validation
+        //                    if (hoveredSwat != selectedSwat
+        //                        //&& !hoveredSwat.GetComponent<Player>().isPlayer
+        //                        )
+        //                    {
+        //                        //AudioSource attackSound = selectedSwat.GetComponent<AudioSource>();
+        //                        //attackSound.Play();
 
-                                int calculatedDamage = CalculateDamage(selectedPlayerScript, hoveredPlayerScript);
+        //                        int calculatedDamage = CalculateDamage(selectedPlayerScript, hoveredPlayerScript);
 
-                                hoveredPlayerScript.ShootPlayer(hoveredSwat, calculatedDamage);
+        //                        hoveredPlayerScript.ShootPlayer(hoveredSwat, calculatedDamage);
 
-                                // Is Player Already Dead ?
-                                if (hoveredSwat.GetComponent<Player>().playerHp <= 0)
-                                {
-                                    hoveredPlayerScript.currentStandingTile.isFilled = false;
-                                    players.Remove(hoveredSwat);
-                                }
+        //                        // Is Player Already Dead ?
+        //                        if (hoveredSwat.GetComponent<Player>().playerHp <= 0)
+        //                        {
+        //                            hoveredPlayerScript.currentStandingTile.isFilled = false;
+        //                            players.Remove(hoveredSwat);
+        //                        }
 
-                                StartCoroutine(ShowDamage(calculatedDamage, hoveredSwat.transform));
-                            }
+        //                        StartCoroutine(ShowDamage(calculatedDamage, hoveredSwat.transform));
+        //                    }
 
-                            selectedSwat = null;
+        //                    selectedSwat = null;
 
-                            ResetAllPlayersRendererColor();
+        //                    ResetAllPlayersRendererColor();
 
-                            HideSelectedPlayerState(selectedPlayerScript);
-                        }
-                        else
-                            selectedSwat = hoveredSwat;
-                        #endregion
+        //                    HideSelectedPlayerState(selectedPlayerScript);
+        //                }
+        //                else
+        //                    selectedSwat = hoveredSwat;
+        //                #endregion
 
-                        #region Show Action Menu
-                        if (selectedSwat != null &&
-                            selectedPlayerScript.isPlayer)
-                        {
-                            HideHoveredPlayerState(hoveredPlayerScript);
+        //                #region Show Action Menu
+        //                if (selectedSwat != null &&
+        //                    selectedPlayerScript.isPlayer)
+        //                {
+        //                    HideHoveredPlayerState(hoveredPlayerScript);
 
-                            ShowSelectedPlayerState(selectedPlayerScript);
+        //                    ShowSelectedPlayerState(selectedPlayerScript);
 
-                            // Validate If Only Close Quarters Can Throw Grenade
-                            if (selectedPlayerScript.grenadeQty > 0)
-                                actionMenuUI.transform.Find("GrenadeButton").gameObject.SetActive(false);
+        //                    // Validate If Only Close Quarters Can Throw Grenade
+        //                    if (selectedPlayerScript.grenadeQty > 0)
+        //                        actionMenuUI.transform.Find("GrenadeButton").gameObject.SetActive(false);
 
-                            // Validate If Around Player Has Door
-                            Tile playerTile = selectedPlayerScript.currentStandingTile;
-                            for (int i = 0; i < 4; i++)
-                            {
-                                if (playerTile.neighbours[i] != null &&
-                                    (playerTile.neighbours[i].isHorizontalDoor ||
-                                     playerTile.neighbours[i].isHorizontalDoor))
-                                {
-                                    actionMenuUI.transform.Find("OpenDoorButton").gameObject.SetActive(true);
-                                    actionMenuUI.transform.Find("CloseDoorButton").gameObject.SetActive(true);
-                                }
-                            }
+        //                    // Validate If Around Player Has Door
+        //                    Tile playerTile = selectedPlayerScript.currentStandingTile;
+        //                    for (int i = 0; i < 4; i++)
+        //                    {
+        //                        if (playerTile.neighbours[i] != null &&
+        //                            (playerTile.neighbours[i].isHorizontalDoor ||
+        //                             playerTile.neighbours[i].isHorizontalDoor))
+        //                        {
+        //                            actionMenuUI.transform.Find("OpenDoorButton").gameObject.SetActive(true);
+        //                            actionMenuUI.transform.Find("CloseDoorButton").gameObject.SetActive(true);
+        //                        }
+        //                    }
 
-                            actionMenuUI.SetActive(true);
+        //                    actionMenuUI.SetActive(true);
 
-                            Vector3 hoveredSwatPosition = playerStateUI.transform.position;
-                            hoveredSwatPosition.x += 125;
-                            hoveredSwatPosition.y -= 50;
+        //                    Vector3 hoveredSwatPosition = playerStateUI.transform.position;
+        //                    hoveredSwatPosition.x += 125;
+        //                    hoveredSwatPosition.y -= 50;
 
-                            actionMenuUI.transform.position = hoveredSwatPosition;
+        //                    actionMenuUI.transform.position = hoveredSwatPosition;
 
-                            ResetAllPlayersRendererColor();
+        //                    ResetAllPlayersRendererColor();
 
-                            head.color = body.color = Color.green;
-                        }
-                        #endregion
-                    }
+        //                    head.color = body.color = Color.green;
+        //                }
+        //                #endregion
+        //            }
 
-                    #region Moving
-                    if (selectedSwat != null &&
-                        selectedPlayerScript.isMoving)
-                    {
-                        Player selectedSwatScript = selectedPlayerScript;
+        //            #region Moving
+        //            if (selectedSwat != null &&
+        //                selectedPlayerScript.isMoving)
+        //            {
+        //                Player selectedSwatScript = selectedPlayerScript;
 
-                        if (availableMoves < selectedSwatScript.totalCost)
-                            validCost = false;
-                        else
-                            validCost = true;
+        //                if (availableMoves < selectedSwatScript.totalCost)
+        //                    validCost = false;
+        //                else
+        //                    validCost = true;
 
-                        selectedSwatScript.isSelectingTile = false;
+        //                selectedSwatScript.isSelectingTile = false;
 
-                        if (targetTile != null)
-                        {
-                            targetTile.Unflash();
-                        }
+        //                if (targetTile != null)
+        //                {
+        //                    targetTile.Unflash();
+        //                }
 
-                        if (validCost &&
-                            !targetTile.isFilled)
-                        {
-                            /*
-                             * No Need To Reset UI, 
-                             * MovePlayer() Reset It
-                             */
-                            StartCoroutine(selectedSwatScript.MovePlayer(selectedSwat));
+        //                if (validCost &&
+        //                    !targetTile.isFilled)
+        //                {
+        //                    /*
+        //                     * No Need To Reset UI, 
+        //                     * MovePlayer() Reset It
+        //                     */
+        //                    StartCoroutine(selectedSwatScript.MovePlayer(selectedSwat));
 
-                            selectedSwatScript.isMoving = false;
+        //                    selectedSwatScript.isMoving = false;
 
-                            availableMoves -= hoveredPlayerScript.totalCost;
-                            movesState.text = "Available Moves : " + availableMoves;
+        //                    availableMoves -= hoveredPlayerScript.totalCost;
+        //                    movesState.text = "Available Moves : " + availableMoves;
 
-                            selectedSwatScript.currentStandingTile = targetTile;
-                            selectedSwatScript.currentStandingTile.isFilled = true;
-                            selectedSwatScript.currentStandingTile.swat = selectedSwat;
-                        }
+        //                    selectedSwatScript.currentStandingTile = targetTile;
+        //                    selectedSwatScript.currentStandingTile.isFilled = true;
+        //                    selectedSwatScript.currentStandingTile.swat = selectedSwat;
+        //                }
 
-                        if (selectedSwatScript.isMoving && !validCost)
-                        {
-                            ResetUI();
-                        }
-                    }
-                    #endregion
-                }
-            }
+        //                if (selectedSwatScript.isMoving && !validCost)
+        //                {
+        //                    ResetUI();
+        //                }
+        //            }
+        //            #endregion
+        //        }
+        //    }
 
-            if (Input.GetMouseButtonDown(RIGHT_BUTTON))
-            {
-                ResetAllManipulatedGameState(selectedPlayerScript);
-            }
+        //    if (Input.GetMouseButtonDown(RIGHT_BUTTON))
+        //    {
+        //        ResetAllManipulatedGameState(selectedPlayerScript);
+        //    }
 
-            if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
-            {
-                StartCoroutine(ChangeTurn());
-            }
-        }
+        //    if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        //    {
+        //        StartCoroutine(ChangeTurn());
+        //    }
+        //}
     }
 
     private void ResetAllManipulatedGameState(Player selectedPlayerScript)
     {
         // Hide Menu
-        if (actionMenuUI.activeInHierarchy)
-            actionMenuUI.SetActive(false);
+        //if (actionMenuUI.activeInHierarchy)
+        //    actionMenuUI.SetActive(false);
 
-        // Hide Selected Player State
-        if (selectedPlayerStateUI.activeInHierarchy)
-            HideSelectedPlayerState(selectedPlayerScript);
+        //// Hide Selected Player State
+        //if (selectedPlayerStateUI.activeInHierarchy)
+        //    HideSelectedPlayerState(selectedPlayerScript);
 
-        // Hide Multifunctional Text
-        if (anyText.IsActive())
-            anyText.gameObject.SetActive(false);// Reset The Player State To Not Moving
-        if (selectedPlayerScript.isMoving)
-            selectedPlayerScript.isMoving = false;
+        //// Hide Multifunctional Text
+        //if (anyText.IsActive())
+        //    anyText.gameObject.SetActive(false);// Reset The Player State To Not Moving
+        //if (selectedPlayerScript.isMoving)
+        //    selectedPlayerScript.isMoving = false;
 
-        // Reset The Player State To Not Attacking
-        if (selectedPlayerScript.isAttacking)
-            selectedPlayerScript.isAttacking = false;
+        //// Reset The Player State To Not Attacking
+        //if (selectedPlayerScript.isAttacking)
+        //    selectedPlayerScript.isAttacking = false;
 
-        // Reset All Player Render Color
-        ResetAllPlayersRendererColor();
+        //// Reset All Player Render Color
+        //ResetAllPlayersRendererColor();
 
-        // Unflash Hovered Cell
-        if (selectedPlayerScript.isSelectingTile &&
-            previousHittedTile != null)
-        {
-            selectedPlayerScript.isSelectingTile = false;
-            previousHittedTile.GetComponent<Tile>().Unflash();
-            line.positionCount = 0;
-        }
+        //// Unflash Hovered Cell
+        //if (selectedPlayerScript.isSelectingTile &&
+        //    previousHittedTile != null)
+        //{
+        //    selectedPlayerScript.isSelectingTile = false;
+        //    previousHittedTile.GetComponent<Tile>().Unflash();
+        //    line.positionCount = 0;
+        //}
 
-        // Reset Line Count
-        line.positionCount = 0;
+        //// Reset Line Count
+        //line.positionCount = 0;
 
         selectedSwat = null;
     }
 
     private IEnumerator ChangeTurn()
     {
-        Text waitingText = stateCanvas.transform.Find("WaitingText").GetComponent<Text>();
+        //Text waitingText = stateCanvas.transform.Find("WaitingText").GetComponent<Text>();
 
-        waitingText.text = "Waiting for Players turn...";
+        //waitingText.text = "Waiting for Players turn...";
 
         // Bot Logic
         // turn = Turn.Enemy;
@@ -1133,23 +995,23 @@ public class MazeLoader : MonoBehaviour
 
         yield return new WaitForSeconds(4);
 
-        waitingText.text = "Press [ENTER] To End Turn...";
+        //waitingText.text = "Press [ENTER] To End Turn...";
 
-        availableMoves = maxMoves;
+        //availableMoves = maxMoves;
 
-        StartCoroutine(PanCameraToPlayer(prevHoveredSwat));
+        //StartCoroutine(PanCameraToPlayer(prevHoveredSwat));
     }
 
     private void ResetUI()
     {
-        Text anyText = stateCanvas.transform.Find("anyText").GetComponent<Text>();
-        anyText.gameObject.SetActive(false);
+        //Text anyText = stateCanvas.transform.Find("anyText").GetComponent<Text>();
+        //anyText.gameObject.SetActive(false);
 
-        ResetAllPlayersRendererColor();
+        //ResetAllPlayersRendererColor();
 
-        selectedPlayerStateUI.SetActive(false);
+        //selectedPlayerStateUI.SetActive(false);
 
-        line.positionCount = 0;
+        //line.positionCount = 0;
     }
 
     private int CalculateDamage(Player attacker, Player target)
@@ -1181,33 +1043,7 @@ public class MazeLoader : MonoBehaviour
         }
     }
 
-    private IEnumerator ShowDamage(int damage, Transform parentObject)
-    {
-        GameObject ui = stateCanvas.transform.Find("anyText").gameObject;
-        CanvasGroup canvasGroup = ui.GetComponent<CanvasGroup>();
-        Text uiText = ui.GetComponentInChildren<Text>();
-        ui.SetActive(true);
-        uiText.text = "-" + damage;
-
-        float percent = 0.1f;
-
-        while (percent < 1f)
-        {
-            Vector3 start = parentObject.Find("PlayerNamePlaceholder").transform.position + (Vector3.up * 5);
-            Vector3 finish = parentObject.Find("PlayerNamePlaceholder").transform.position + (Vector3.up * 10);
-            Vector3 newPosition = Vector3.Lerp(start, finish, percent);
-            ui.transform.position = Camera.main.WorldToScreenPoint(newPosition);
-
-            canvasGroup.alpha -= 0.02f;
-
-            percent += 0.02f;
-
-            yield return null;
-        }
-
-        ui.SetActive(false);
-        canvasGroup.alpha = 1f;
-    }
+    
 
     private void SetPreviousSwat(RaycastHit hittedSwat)
     {
@@ -1226,44 +1062,44 @@ public class MazeLoader : MonoBehaviour
 
     private void ShowHoveredPlayerState(Player player)
     {
-        if (player == null)
-            return;
+        //if (player == null)
+        //    return;
 
-        NameLoader playerUIScript = hoveredSwat.GetComponentInChildren<NameLoader>();
-        playerUIScript.playerNameUI.text = player.playerName;
-        playerUIScript.playerHpUI.maxValue = player.maxHp;
-        playerUIScript.playerHpUI.value = player.playerHp;
+        //NameLoader playerUIScript = hoveredSwat.GetComponentInChildren<NameLoader>();
+        //playerUIScript.playerNameUI.text = player.playerName;
+        //playerUIScript.playerHpUI.maxValue = player.maxHp;
+        //playerUIScript.playerHpUI.value = player.playerHp;
 
-        if (!player.isPlayer)
-            playerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 0;
-        else
-            playerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 1;
+        //if (!player.isPlayer)
+        //    playerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 0;
+        //else
+        //    playerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 1;
 
-        playerStateUI.gameObject.SetActive(true);
+        //playerStateUI.gameObject.SetActive(true);
 
-        Vector3 newPosition = Camera.main.WorldToScreenPoint(playerUIScript.transform.position);
-        playerStateUI.transform.position = newPosition;
+        //Vector3 newPosition = Camera.main.WorldToScreenPoint(playerUIScript.transform.position);
+        //playerStateUI.transform.position = newPosition;
     }
 
     private void ShowSelectedPlayerState(Player player)
     {
-        if (player == null)
-            return;
+        //if (player == null)
+        //    return;
 
-        NameLoader playerUIScript = selectedSwat.GetComponentInChildren<NameLoader>();
-        selectedPlayerStateUI.GetComponentInChildren<Text>().text = player.playerName;
-        selectedPlayerStateUI.GetComponentInChildren<Slider>().maxValue = player.maxHp;
-        selectedPlayerStateUI.GetComponentInChildren<Slider>().value = player.playerHp;
+        //NameLoader playerUIScript = selectedSwat.GetComponentInChildren<NameLoader>();
+        //selectedPlayerStateUI.GetComponentInChildren<Text>().text = player.playerName;
+        //selectedPlayerStateUI.GetComponentInChildren<Slider>().maxValue = player.maxHp;
+        //selectedPlayerStateUI.GetComponentInChildren<Slider>().value = player.playerHp;
 
-        if (!player.isPlayer)
-            selectedPlayerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 0;
-        else
-            selectedPlayerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 1;
+        //if (!player.isPlayer)
+        //    selectedPlayerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 0;
+        //else
+        //    selectedPlayerStateUI.GetComponentInChildren<Slider>().GetComponent<CanvasGroup>().alpha = 1;
 
-        selectedPlayerStateUI.gameObject.SetActive(true);
+        //selectedPlayerStateUI.gameObject.SetActive(true);
 
-        Vector3 newPosition = Camera.main.WorldToScreenPoint(playerUIScript.transform.position);
-        selectedPlayerStateUI.transform.position = newPosition;
+        //Vector3 newPosition = Camera.main.WorldToScreenPoint(playerUIScript.transform.position);
+        //selectedPlayerStateUI.transform.position = newPosition;
     }
 
     private void HideHoveredPlayerState(Player player)
@@ -1271,7 +1107,7 @@ public class MazeLoader : MonoBehaviour
         if (player == null)
             return;
 
-        playerStateUI.gameObject.SetActive(false);
+        //playerStateUI.gameObject.SetActive(false);
     }
 
     private void HideSelectedPlayerState(Player player)
@@ -1279,128 +1115,38 @@ public class MazeLoader : MonoBehaviour
         if (player == null)
             return;
 
-        selectedPlayerStateUI.gameObject.SetActive(false);
+        //selectedPlayerStateUI.gameObject.SetActive(false);
     }
 
     void LateUpdate()
     {
-        if (!isPaused) // Game Is Not In Pause Mode
-        {
-            if (!DevelopmentMode)
-            {
-                if (Input.mousePosition.y >= Screen.height)
-                {
-                    // Move North
-                    Camera.main.transform.Translate(Vector3.right * Time.deltaTime * scrollSpeed, Space.World);
-                    Camera.main.transform.Translate(Vector3.forward * Time.deltaTime * scrollSpeed, Space.World);
-                }
-                else if (Input.mousePosition.y <= 5)
-                {
-                    // Move South
-                    Camera.main.transform.Translate(Vector3.left * Time.deltaTime * scrollSpeed, Space.World);
-                    Camera.main.transform.Translate(Vector3.back * Time.deltaTime * scrollSpeed, Space.World);
-                }
-                else if (Input.mousePosition.x >= Screen.width * 0.98)
-                {
-                    // Move East
-                    Camera.main.transform.Translate(Vector3.right * Time.deltaTime * scrollSpeed, Space.World);
-                    Camera.main.transform.Translate(Vector3.back * Time.deltaTime * scrollSpeed, Space.World);
-
-                    if (Input.GetKey(KeyCode.AltGr) || Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
-                    {
-                        // Rotate To East
-                        Camera.main.transform.Rotate(0.0f,
-                            Time.deltaTime * 100f,
-                            0.0f, Space.World);
-                    }
-                }
-                else if (Input.mousePosition.x <= 0)
-                {
-                    // Move West
-                    Camera.main.transform.Translate(Vector3.left * Time.deltaTime * scrollSpeed, Space.World);
-                    Camera.main.transform.Translate(Vector3.forward * Time.deltaTime * scrollSpeed, Space.World);
-
-                    if (Input.GetKey(KeyCode.AltGr) || Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt))
-                    {
-                        // Rotate To West
-                        Camera.main.transform.Rotate(0.0f,
-                            -Time.deltaTime * 100f,
-                            0.0f, Space.World);
-                    }
-                }
-            }
-
-            // Key
-            if (Input.GetKeyUp(KeyCode.Return) || Input.GetKeyUp(KeyCode.KeypadEnter))
-            {
-                // End Turn
-            }
-            else if (Input.GetKeyUp(KeyCode.Escape))
-            {
-                // Show Pause Menu
-                gameStateText.text = "Game is Paused";
-                subGameStateText.text = "Press Escape To Resumed or ENTER To Exit Game";
-                gameStateText.gameObject.SetActive(true);
-                subGameStateText.gameObject.SetActive(true);
-                turnStateText.gameObject.SetActive(false);
-                ToggleGameState();
-            }
-        }
-        else if (isPaused)// Is Paused
-        {
-            if (Input.GetKeyUp(KeyCode.Return) || Input.GetKeyUp(KeyCode.KeypadEnter))
-            {
-                GameSettings.SCENE_HELPER = 1;
-                UnityEngine.SceneManagement.SceneManager.LoadScene(0);
-            }
-            else if (Input.GetKeyUp(KeyCode.Escape))
-            {
-                gameStateText.gameObject.SetActive(false);
-                subGameStateText.gameObject.SetActive(false);
-                turnStateText.gameObject.SetActive(true);
-                ToggleGameState();
-            }
-        }
-    }
-
-    private void ToggleGameState()
-    {
-        isPaused = !isPaused;
-
-        if (isPaused)
-        {
-            mainCameraLight.gameObject.SetActive(true);
-        }
-        else if (!isPaused)
-        {
-            mainCameraLight.gameObject.SetActive(false);
-        }
+        
     }
 
     public void ResetAllPlayersRendererColor()
     {
-        foreach (GameObject p in players)
-        {
-            GameObject geo = p.transform.Find("Geo").gameObject;
-            Material head = geo.transform.Find("Soldier_head").gameObject.GetComponent<SkinnedMeshRenderer>().material;
-            Material body = geo.transform.Find("Soldier_body").gameObject.GetComponent<SkinnedMeshRenderer>().material;
+        //foreach (GameObject p in players)
+        //{
+        //    GameObject geo = p.transform.Find("Geo").gameObject;
+        //    Material head = geo.transform.Find("Soldier_head").gameObject.GetComponent<SkinnedMeshRenderer>().material;
+        //    Material body = geo.transform.Find("Soldier_body").gameObject.GetComponent<SkinnedMeshRenderer>().material;
 
-            head.color = body.color = Color.white;
-        }
+        //    head.color = body.color = Color.white;
+        //}
     }
 
     public void Move()
     {
-        selectedSwat.GetComponent<Player>().MenuMove();
+        selectedSwat.GetComponent<Player>().Move();
     }
 
     public void Attack()
     {
-        selectedSwat.GetComponent<Player>().MenuAttack();
+        selectedSwat.GetComponent<Player>().Attack();
     }
 
     public void Throw()
     {
-        selectedSwat.GetComponent<Player>().MenuThrowGrenade();
+        selectedSwat.GetComponent<Player>().ThrowGrenade();
     }
 }
