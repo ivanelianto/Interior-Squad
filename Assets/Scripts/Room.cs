@@ -4,6 +4,8 @@
 
     public Room leftRoom, rightRoom, parent, sibling;
 
+    public Tile[][] roomTile;
+
     public Room(int x, int y, int width, int height)
     {
         this.x = x;

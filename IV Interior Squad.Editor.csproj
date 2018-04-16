@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Assets\Fonts\Orbitron\SIL Open Font License.txt" />
+    <None Include="Assets\EffectExamples\Shared\Shaders\SurfaceShader_VC.shader" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramRender.shader" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\ParadeRender.shader" />

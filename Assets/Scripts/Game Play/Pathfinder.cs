@@ -1,9 +1,16 @@
 ﻿using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Pathfinder : MonoBehaviour
 {
+    private MazeLoader mazeLoader;
+
+    private void Start()
+    {
+        mazeLoader = GetComponent<MazeLoader>();
+    }
     // Theta* Algorithm
     public Dictionary<List<Tile>, int> PathFinding(Tile start, Tile destination)
     {
@@ -22,8 +29,6 @@ public class Pathfinder : MonoBehaviour
         openSet.Add(start);
         start.gCost = 0;
 
-        int cost = 0;
-
         // selama masih ada tile, terus buka
         while (openSet.Count > 0)
         {
@@ -35,7 +40,7 @@ public class Pathfinder : MonoBehaviour
             foreach (Tile n in curr.neighbours)
             {
                 // kalo tile itu dinding, etc..... diabaikan
-                if (n == null || n.isWall || closedSet.Contains(n))
+                if (n == null || n.isFilled || n.isWall || closedSet.Contains(n))
                     continue;
 
                 // kalo udah ada di openSet, check apakah lbih hemat
@@ -66,10 +71,15 @@ public class Pathfinder : MonoBehaviour
                 }
                 // kasi cost ke tiap tile n
 
-                if (LineOfSight(n, curr.parent))
+                //if (LineOfSight(n, curr.parent))
+                //{
+                //    n.isLineOfSight = true;
+                //    n.parent = curr.parent;
+                //}
+
+                if (LineOfSightTipuTipu(n, curr.parent))
                 {
-                    // +1 Jika Diagonal Move
-                    //cost += 1;
+                    n.isLineOfSight = true;
                     n.parent = curr.parent;
                 }
 
@@ -77,7 +87,6 @@ public class Pathfinder : MonoBehaviour
 
                 if (n == destination)
                 {
-                    // fungsi GetPathFromDestToStart : List<Tile> -> return
                     return Backtracking(start, destination);
                 }
             }
@@ -89,8 +98,97 @@ public class Pathfinder : MonoBehaviour
         return null;
     }
 
+    public bool LineOfSightTipuTipu(Tile start, Tile destination)
+    {
+        Vector3 direction = destination.position - start.position;
+
+        if (Physics.Raycast(start.position + Vector3.up, direction, direction.magnitude))
+            return false;
+
+        return true;
+    }
+
     public bool LineOfSight(Tile start, Tile destination)
     {
+        int x1 = (int)start.GetX();
+        int y1 = (int)start.GetY();
+        int x2 = (int)destination.GetX();
+        int y2 = (int)destination.GetY();
+
+        int dx = x2 - x1;
+        int dy = y2 - y1;
+
+        int stepx = (dx > 0) ? 1 : -1;
+        int stepy = (dy > 0) ? 1 : -1;
+
+        int limiter = (dx > dy) ? dx : dy;
+
+        int currx = x1;
+        int curry = y1;
+
+        int error = 0;
+        int errorprev = 0;
+        error = errorprev = (dx < dy) ? dx : dy;
+
+        for (int i = 0; i < limiter; i++)
+        {
+            if (dx > dy)
+            {
+                currx += stepx;
+                error += dy;
+                if (error > dx)
+                {
+                    curry += stepy;
+                    error -= dx;
+                    if (error + errorprev < dx)
+                    {
+                        if (mazeLoader.map[curry - stepy][currx].isFilled)
+                            return false;
+                    }
+                    else if (error + errorprev > dx)
+                    {
+                        if (mazeLoader.map[curry][currx - stepx].isFilled)
+                            return false;
+                    }
+                    else
+                    {
+                        if (mazeLoader.map[curry - stepy][currx].isFilled)
+                            return false;
+                        if (mazeLoader.map[curry][currx - stepx].isFilled)
+                            return false;
+                    }
+                }
+            }
+            else
+            {
+                curry += stepy;
+                error += dx;
+                if (error > dy)
+                {
+                    currx += stepx;
+                    error -= dy;
+                    if (error + errorprev < dy)
+                    {
+                        if (mazeLoader.map[curry][currx - stepx].isFilled)
+                            return false;
+                    }
+                    else if (error + errorprev > dy)
+                    {
+                        if (mazeLoader.map[curry - stepy][currx].isFilled)
+                            return false;
+                    }
+                    else
+                    {
+                        if (mazeLoader.map[curry - stepy][currx].isFilled)
+                            return false;
+                        if (mazeLoader.map[curry][currx - stepx].isFilled)
+                            return false;
+                    }
+                }
+            }
+            errorprev = error;
+        }
+
         return true;
     }
 
@@ -102,15 +200,21 @@ public class Pathfinder : MonoBehaviour
 
         while (destination.parent != destination)
         {
-            nodes.Add(destination.parent);
-            destination = destination.parent;
+            if (destination.isLineOfSight)
+                totalCost++;
+
             totalCost++;
+
+            nodes.Add(destination.parent);
+
+            destination = destination.parent;
         }
 
         nodes.Reverse();
 
         Dictionary<List<Tile>, int> result = new Dictionary<List<Tile>, int>();
-        result.Add(nodes, totalCost);
+
+        result.Add(nodes, totalCost - 1);
 
         return result;
     }

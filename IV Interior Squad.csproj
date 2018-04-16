@@ -79,6 +79,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\DecalDestroyer.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\ExtinguishableFire.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\GunAim.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\GunShoot.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleCollision.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleExamples.cs" />
+    <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleMenu.cs" />
     <Compile Include="Assets\PostProcessing\Runtime\Attributes\GetSetAttribute.cs" />
     <Compile Include="Assets\PostProcessing\Runtime\Attributes\MinAttribute.cs" />
     <Compile Include="Assets\PostProcessing\Runtime\Attributes\TrackballAttribute.cs" />
@@ -124,7 +131,10 @@
     <Compile Include="Assets\PostProcessing\Runtime\Utils\MaterialFactory.cs" />
     <Compile Include="Assets\PostProcessing\Runtime\Utils\RenderTextureFactory.cs" />
     <Compile Include="Assets\PostProcessing\Utilities\CustomMotionTexture\ExampleWheelController.cs" />
+    <Compile Include="Assets\Scripts\ArchivedCode.cs" />
     <Compile Include="Assets\Scripts\CharacterSelectionController.cs" />
+    <Compile Include="Assets\Scripts\Dijkstra.cs" />
+    <Compile Include="Assets\Scripts\DoorController.cs" />
     <Compile Include="Assets\Scripts\FloorController.cs" />
     <Compile Include="Assets\Scripts\Game Play\CloseQuartersController.cs" />
     <Compile Include="Assets\Scripts\Game Play\Gameplay.cs" />
@@ -133,6 +143,7 @@
     <Compile Include="Assets\Scripts\Game Play\Player.cs" />
     <Compile Include="Assets\Scripts\Game Play\SniperController.cs" />
     <Compile Include="Assets\Scripts\GameSettings.cs" />
+    <Compile Include="Assets\Scripts\Grenade.cs" />
     <Compile Include="Assets\Scripts\LoadingScreenController.cs" />
     <Compile Include="Assets\Scripts\MainMenuController.cs" />
     <Compile Include="Assets\Scripts\MapSizeController.cs" />
@@ -142,9 +153,11 @@
     <Compile Include="Assets\Scripts\SettingsMenuController.cs" />
     <Compile Include="Assets\Scripts\SwatController.cs" />
     <Compile Include="Assets\Scripts\Tile.cs" />
+    <Compile Include="Assets\Scripts\WeaponController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Assets\Fonts\Orbitron\SIL Open Font License.txt" />
+    <None Include="Assets\EffectExamples\Shared\Shaders\SurfaceShader_VC.shader" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramCompute.compute" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramRender.shader" />
     <None Include="Assets\PostProcessing\Editor Resources\Monitors\ParadeRender.shader" />

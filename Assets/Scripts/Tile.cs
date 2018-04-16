@@ -2,19 +2,26 @@
 
 public class Tile : MonoBehaviour
 {
+    [HideInInspector]
     public bool isFilled,
                 isWall,
                 isHorizontalDoor,
-                isVerticalDoor;
+                isVerticalDoor,
+                isLineOfSight;
 
     // gCost = Cost Dari Start Node Ke Current Hovered Node
     // hCost = Ini Heuristic
     // fCost = gCost + hCost
+    [HideInInspector]
     public float gCost, hCost, fCost;
 
+    [HideInInspector]
     public Vector3 position;
 
+    [HideInInspector]
     public Tile parent;
+
+    [HideInInspector]
     public Tile[] neighbours;
 
     public GameObject plane,
@@ -27,7 +34,11 @@ public class Tile : MonoBehaviour
                       sofa2,
                       sofa3;
 
+    [HideInInspector]
     public bool isDoorClosed = false;
+
+    [HideInInspector]
+    public int x, y;
 
     public Tile(Tile _tile)
     {
@@ -72,5 +83,15 @@ public class Tile : MonoBehaviour
     public void Unflash()
     {
         this.gameObject.GetComponent<Renderer>().material.color = Color.white;
+    }
+
+    public float GetX()
+    {
+        return this.gameObject.transform.position.x / 10;
+    }
+
+    public float GetY()
+    {
+        return this.gameObject.transform.position.z / 10;
     }
 }

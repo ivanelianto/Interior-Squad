@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{93CEE8D6-F2CB-EF71-4832-2A3A8B332248}</ProjectGuid>
+    <ProjectGuid>{7A897B22-928C-63DC-F1CE-997B71A985A3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -51,6 +51,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\EffectExamples\Shared\Scripts\DecalDestroyer.cs" />
+     <Compile Include="Assets\EffectExamples\Shared\Scripts\ExtinguishableFire.cs" />
+     <Compile Include="Assets\EffectExamples\Shared\Scripts\GunAim.cs" />
+     <Compile Include="Assets\EffectExamples\Shared\Scripts\GunShoot.cs" />
+     <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleCollision.cs" />
+     <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleExamples.cs" />
+     <Compile Include="Assets\EffectExamples\Shared\Scripts\ParticleMenu.cs" />
      <Compile Include="Assets\PostProcessing\Runtime\Attributes\GetSetAttribute.cs" />
      <Compile Include="Assets\PostProcessing\Runtime\Attributes\MinAttribute.cs" />
      <Compile Include="Assets\PostProcessing\Runtime\Attributes\TrackballAttribute.cs" />
@@ -96,13 +103,19 @@
      <Compile Include="Assets\PostProcessing\Runtime\Utils\MaterialFactory.cs" />
      <Compile Include="Assets\PostProcessing\Runtime\Utils\RenderTextureFactory.cs" />
      <Compile Include="Assets\PostProcessing\Utilities\CustomMotionTexture\ExampleWheelController.cs" />
+     <Compile Include="Assets\Scripts\ArchivedCode.cs" />
      <Compile Include="Assets\Scripts\CharacterSelectionController.cs" />
+     <Compile Include="Assets\Scripts\Dijkstra.cs" />
+     <Compile Include="Assets\Scripts\DoorController.cs" />
      <Compile Include="Assets\Scripts\FloorController.cs" />
      <Compile Include="Assets\Scripts\Game Play\CloseQuartersController.cs" />
+     <Compile Include="Assets\Scripts\Game Play\Gameplay.cs" />
      <Compile Include="Assets\Scripts\Game Play\OperatorController.cs" />
+     <Compile Include="Assets\Scripts\Game Play\Pathfinder.cs" />
      <Compile Include="Assets\Scripts\Game Play\Player.cs" />
      <Compile Include="Assets\Scripts\Game Play\SniperController.cs" />
      <Compile Include="Assets\Scripts\GameSettings.cs" />
+     <Compile Include="Assets\Scripts\Grenade.cs" />
      <Compile Include="Assets\Scripts\LoadingScreenController.cs" />
      <Compile Include="Assets\Scripts\MainMenuController.cs" />
      <Compile Include="Assets\Scripts\MapSizeController.cs" />
@@ -112,9 +125,11 @@
      <Compile Include="Assets\Scripts\SettingsMenuController.cs" />
      <Compile Include="Assets\Scripts\SwatController.cs" />
      <Compile Include="Assets\Scripts\Tile.cs" />
+     <Compile Include="Assets\Scripts\WeaponController.cs" />
      <None Include="Assets\PostProcessing\Resources\Shaders\DepthOfField.shader" />
      <None Include="Assets\PostProcessing\Resources\Shaders\MotionBlur.cginc" />
      <None Include="Assets\PostProcessing\Resources\Shaders\Fog.shader" />
+     <None Include="Assets\EffectExamples\Shared\Shaders\SurfaceShader_VC.shader" />
      <None Include="Assets\PostProcessing\Editor Resources\Monitors\ParadeRender.shader" />
      <None Include="Assets\PostProcessing\Resources\Shaders\LutGen.shader" />
      <None Include="Assets\PostProcessing\Editor Resources\Monitors\HistogramRender.shader" />
