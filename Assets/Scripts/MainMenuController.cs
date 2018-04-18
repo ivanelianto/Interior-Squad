@@ -53,23 +53,6 @@ public class MainMenuController : MonoBehaviour
         for (int i = 0; i < selectedPlayers.Length; i++)
         {
             int characterType = selectedPlayers[i].value;
-
-            //Player character = null;
-
-            //if (characterType == Gameplay.OPERATOR)
-            //{
-            //    character = new OperatorController();
-            //}
-            //else if (characterType == Gameplay.SNIPER)
-            //{
-            //    character = new SniperController();
-            //}
-            //else
-            //{
-            //    character = new CloseQuartersController();
-            //}
-
-
             GameSettings.players.Add(characterType);
         }
 

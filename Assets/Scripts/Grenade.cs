@@ -25,12 +25,6 @@ public class Grenade : MonoBehaviour
     void Start()
     {
         gameManager = GameObject.FindGameObjectWithTag("MainScript");
-        //anyText = gameManager.GetComponent<Gameplay>().anyText;
-
-        //texts = new List<Text>();
-
-        //for (int i = 0; i < 4; i++)
-        //    texts.Add(Instantiate(anyText));
     }
 
     // Update is called once per frame
@@ -106,12 +100,17 @@ public class Grenade : MonoBehaviour
                             crb.isKinematic = false;
 
                         rb.AddExplosionForce(force * 500f, transform.position, radius);
+
+                        Gameplay gameplay = gameManager.GetComponent<Gameplay>();
+
+                        // Check If Game Already Done
+                        gameplay.ShowGameIsOverState();
                     }
                 }
             }
         }
 
-        AudioSource.PlayClipAtPoint(explodeSound, transform.position);
+        FindObjectOfType<Gameplay>().gameObject.transform.Find("GrenadeExplosionAudio").GetComponent<AudioSource>().Play();
 
         // Delay Before Destroying Object
         yield return new WaitForSeconds(2);

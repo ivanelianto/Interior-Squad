@@ -2051,11 +2051,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c605b43c973f7ba46a69740007d9b823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enableCameraMovement: 0
+  enableCameraMovement: 1
   mainCanvas: {fileID: 2136792689}
   menuUI: {fileID: 891434373}
   hoveredCharacterUI: {fileID: 2147405527}
   selectedCharacterUI: {fileID: 43879630}
+  openDoorButton: {fileID: 291007034}
+  closeDoorButton: {fileID: 1969438909}
   pauseText: {fileID: 1723839058}
   subPauseText: {fileID: 62735364}
   movesText: {fileID: 250252229}

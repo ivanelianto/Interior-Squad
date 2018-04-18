@@ -2,7 +2,7 @@
 
 public class Tile : MonoBehaviour
 {
-    [HideInInspector]
+    
     public bool isFilled,
                 isWall,
                 isHorizontalDoor,
@@ -18,10 +18,8 @@ public class Tile : MonoBehaviour
     [HideInInspector]
     public Vector3 position;
 
-    [HideInInspector]
     public Tile parent;
 
-    [HideInInspector]
     public Tile[] neighbours;
 
     public GameObject plane,

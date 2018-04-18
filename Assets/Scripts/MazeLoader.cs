@@ -67,7 +67,7 @@ public class MazeLoader : MonoBehaviour
 
         //InitializeEnemies(playerRoom);
 
-        FlashObjectTile();
+        //FlashObjectTile();
     }
 
     private void FlashObjectTile()
@@ -156,7 +156,10 @@ public class MazeLoader : MonoBehaviour
                      map[room.y][room.x + randomPoint - 1].isHorizontalDoor ||
                      map[room.y + room.height - 1][room.x + randomPoint - 1].isHorizontalDoor);
 
-            do door = new System.Random().Next() % room.height;
+            do
+            {
+                door = new System.Random().Next() % room.height;
+            }
             while (door % (room.height - 1) == 0);
 
             map[room.y + door][room.x + randomPoint - 1].isVerticalDoor = true;
@@ -267,19 +270,22 @@ public class MazeLoader : MonoBehaviour
                     }
 
                     // Initialize Door (20% Chance)
-                    if (UnityEngine.Random.Range(1, 11) <= 1)
-                    {
-                        if (map[r][c].isVerticalDoor)
+                    //if (UnityEngine.Random.Range(1, 11) >= 1)
+                    //{
+                        if (map[r][c].isVerticalDoor && 
+                            map[r][c].door == null &&
+                            !map[r][c].isFilled)
                         {
                             map[r][c].door = Instantiate(door, new Vector3(c * 10, 5, r * 10), Quaternion.Euler(0, 90, 0));
                         }
-                        else if (map[r][c].isHorizontalDoor)
+                        else if (map[r][c].isHorizontalDoor && 
+                                 map[r][c].door == null &&
+                                 !map[r][c].isFilled)
                         {
                             map[r][c].door = Instantiate(door, new Vector3(c * 10, 5, r * 10), Quaternion.identity);
                         }
                         map[r][c].isFilled = true;
-                        //map[r][c].door.transform.parent = tilesWrapper.transform;
-                    }
+                    //}
                 }
             }
 

@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [HideInInspector]
     public MazeLoader mazeLoader;
+    public Gameplay gameplay;
 
     [HideInInspector]
     public int totalCost = 0;
@@ -30,6 +28,8 @@ public class Player : MonoBehaviour
     {
         mazeLoader = GameObject.Find("GameManager").GetComponent<MazeLoader>();
 
+        gameplay = FindObjectOfType<Gameplay>();
+
         maxHp = playerHp;
     }
 
@@ -38,29 +38,39 @@ public class Player : MonoBehaviour
         if (targetPlayer.GetComponent<Player>() == null)
             return;
 
-        Animator attackerAnimator = this.gameObject.GetComponent<Animator>();
-        attackerAnimator.SetTrigger("shoot");
-
-        targetPlayer.GetComponent<Player>().playerHp -= damage;
-
-        if (targetPlayer.GetComponent<Player>().playerHp <= 0)
+        if (true)
         {
-            Animator targetPlayerAnimator = targetPlayer.GetComponent<Animator>();
-            targetPlayerAnimator.enabled = false;
+            Animator attackerAnimator = this.gameObject.GetComponent<Animator>();
+            attackerAnimator.SetTrigger("shoot");
 
-            Rigidbody[] targetPlayerRigidbody = targetPlayer.GetComponentsInChildren<Rigidbody>();
+            targetPlayer.GetComponent<Player>().playerHp -= damage;
 
-            foreach (Rigidbody rb in targetPlayerRigidbody)
-                rb.isKinematic = false;
+            if (targetPlayer.GetComponent<Player>().playerHp <= 0)
+            {
+                if (targetPlayer.GetComponent<Player>().currentStandingTile != null)
+                {
+                    targetPlayer.GetComponent<Player>().currentStandingTile.isFilled = false;
+                    targetPlayer.GetComponent<Player>().currentStandingTile.swat = null;
+                    targetPlayer.GetComponent<Player>().currentStandingTile = null;
+                }
 
-            Vector3 shootingDirection;
-            this.gameObject.transform.LookAt(targetPlayer.transform);
+                Animator targetPlayerAnimator = targetPlayer.GetComponent<Animator>();
+                targetPlayerAnimator.enabled = false;
 
-            shootingDirection = this.gameObject.transform.forward;
+                Rigidbody[] targetPlayerRigidbody = targetPlayer.GetComponentsInChildren<Rigidbody>();
 
-            targetPlayer.GetComponent<Rigidbody>().AddForce(shootingDirection * 0.01f, ForceMode.Impulse);
-            
-            targetPlayer.layer = LayerMask.NameToLayer("Default");
+                foreach (Rigidbody rb in targetPlayerRigidbody)
+                    rb.isKinematic = false;
+
+                Vector3 shootingDirection;
+                this.gameObject.transform.LookAt(targetPlayer.transform);
+
+                shootingDirection = this.gameObject.transform.forward;
+
+                targetPlayer.GetComponent<Rigidbody>().AddForce(shootingDirection);
+
+                targetPlayer.layer = LayerMask.NameToLayer("Default");
+            }
         }
     }
 

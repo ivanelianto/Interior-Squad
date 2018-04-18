@@ -73,7 +73,7 @@ public class Pathfinder : MonoBehaviour
 
                 //if (LineOfSight(n, curr.parent))
                 //{
-                //    n.isLineOfSight = true;
+                //    n.gCost += 10;
                 //    n.parent = curr.parent;
                 //}
 
@@ -198,23 +198,36 @@ public class Pathfinder : MonoBehaviour
 
         int totalCost = 0;
 
+        //print("Cost : " + destination.gCost);
+        //print("LoS  : " + destination.isLineOfSight);
+
         while (destination.parent != destination)
         {
-            if (destination.isLineOfSight)
-                totalCost++;
-
-            totalCost++;
+            //print("G Cost : " + destination.gCost);
+            //totalCost = Mathf.RoundToInt(destination.gCost) - Mathf.RoundToInt(destination.parent.gCost);
 
             nodes.Add(destination.parent);
-
             destination = destination.parent;
         }
+
+        //nodes.ForEach(n =>
+        //{
+        //    print("G Cost : " + n.gCost);
+
+        //    totalCost = Mathf.RoundToInt(n.gCost);
+
+        //    if (n.isLineOfSight)
+        //        totalCost -= 10;
+        //});
+
+        //print("Total Cost : " + totalCost);
+        totalCost = Mathf.RoundToInt(destination.gCost / 10);
 
         nodes.Reverse();
 
         Dictionary<List<Tile>, int> result = new Dictionary<List<Tile>, int>();
 
-        result.Add(nodes, totalCost - 1);
+        result.Add(nodes, totalCost);
 
         return result;
     }

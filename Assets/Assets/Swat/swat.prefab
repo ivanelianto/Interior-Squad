@@ -473,7 +473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4778210771539890}
   - component: {fileID: 108747457791991778}
-  m_Layer: 8
+  m_Layer: 14
   m_Name: Spotlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3757,6 +3757,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mazeLoader: {fileID: 0}
+  gameplay: {fileID: 0}
   totalCost: 0
   isSelectingTile: 0
   isMoving: 0
@@ -3784,6 +3785,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mazeLoader: {fileID: 0}
+  gameplay: {fileID: 0}
   totalCost: 0
   isSelectingTile: 0
   isMoving: 0
