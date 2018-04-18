@@ -11,9 +11,7 @@ public class DoorController : MonoBehaviour
         Open, Close
     }
 
-    private float incrementX = 5.7f,
-                  //incrementZ = 10f,
-                  incrementZ = 6f,
+    private float incrementZ = 6f,
                   incrementRotationY = 90f;
 
     private Vector3 closedPosition,
@@ -27,19 +25,19 @@ public class DoorController : MonoBehaviour
         state = DoorState.Close;
     }
 
-    public void PrepareDoorHinge()
-    {
-        closedPosition = transform.position;
+    //public void PrepareDoorHinge()
+    //{
+    //    closedPosition = transform.position;
 
-        closedRotation = transform.rotation;
+    //    closedRotation = transform.rotation;
 
-        openedPosition = transform.position;
-        //openedPosition.x += incrementX;
-        openedPosition.z += incrementZ;
+    //    openedPosition = transform.position;
+    //    //openedPosition.x += incrementX;
+    //    openedPosition.z += incrementZ;
 
-        openedRotation = transform.rotation;
-        openedRotation.y += incrementRotationY;
-    }
+    //    openedRotation = transform.rotation;
+    //    openedRotation.y += incrementRotationY;
+    //}
 
     public IEnumerator OpenDoorWrapper(Transform characterTransform)
     {
@@ -80,10 +78,6 @@ public class DoorController : MonoBehaviour
 
         Vector3 newPosition = transform.position;
 
-        print(transform.forward); // {1, 0, 0}
-        print(transform.right);   // {0, 0, -1}
-        print(transform.up);      // {0, 1, 0}
-
         newPosition.y = 0;
 
         if (transform.rotation.eulerAngles.y == 0)
@@ -94,7 +88,6 @@ public class DoorController : MonoBehaviour
         }
         else if (transform.rotation.eulerAngles.y == 90)
         {
-            print(Mathf.Round(transform.right.x) - 1);
             newPosition.x = ((Mathf.Round(transform.right.x) - 1) * 4);
             newPosition.z = 0;
             transform.Rotate(Vector3.down * 90f);

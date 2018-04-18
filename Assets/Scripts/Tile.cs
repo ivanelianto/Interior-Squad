@@ -33,7 +33,7 @@ public class Tile : MonoBehaviour
                       sofa3;
 
     [HideInInspector]
-    public bool isDoorClosed = false;
+    public bool isExploredByBot = false;
 
     [HideInInspector]
     public int x, y;

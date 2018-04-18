@@ -167,30 +167,9 @@ public class Gameplay : MonoBehaviour
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        RaycastHit hittedPlane, hittedSwat, hittedEnemy;
+        RaycastHit hittedPlane, hittedSwat;
 
-        if (selectedSwat != null)
-        {
-            if (Physics.SphereCast(selectedSwat.transform.position,
-                    50f,
-                    selectedSwat.transform.forward,
-                    out hittedEnemy,
-                    1000,
-                    LayerMask.GetMask("Swat Enemy")))
-            {
-
-                print("Woke, Enemy Spotted!");
-
-                GameObject characterObject = hittedEnemy.collider.gameObject;
-
-                foreach (Renderer r in characterObject.GetComponentsInChildren<Renderer>())
-                {
-                    r.enabled = true;
-                }
-            }
-        }
-
-            if (isPlayerTurn)
+        if (isPlayerTurn)
         {
             if ((Input.GetKeyUp(KeyCode.Return) || Input.GetKeyUp(KeyCode.KeypadEnter)) &&
                 !isPaused)
@@ -346,7 +325,6 @@ public class Gameplay : MonoBehaviour
                         {
                             if (hoveredSwat.name == "swat:Head")
                             {
-                                print("Caught Head : " + selectedSwat);
                                 selectedSwat = selectedSwat.transform.parent.gameObject;
                             }
 
@@ -1044,7 +1022,6 @@ public class Gameplay : MonoBehaviour
                     if (Physics.Raycast(character.transform.position, character.transform.forward, out door, 5f, LayerMask.GetMask("Door")))
                     {
                         DoorController doorController = door.collider.GetComponentInChildren<DoorController>();
-                        doorController.PrepareDoorHinge();
                         yield return StartCoroutine(doorController.OpenDoor());
                     }
 
@@ -1068,15 +1045,11 @@ public class Gameplay : MonoBehaviour
 
     private IEnumerator OpenDoorWrapper(DoorController door)
     {
-        door.PrepareDoorHinge();
-
         yield return StartCoroutine(door.OpenDoor());
     }
 
     private IEnumerator CloseDoorWrapper(DoorController door)
     {
-        door.PrepareDoorHinge();
-
         yield return StartCoroutine(door.CloseDoor());
     }
 
@@ -1222,8 +1195,8 @@ public class Gameplay : MonoBehaviour
             GameObject characterObject = Instantiate(character, characterPosition, Quaternion.identity);
             characterObject.transform.parent = playersWrapperGameObject.transform;
 
-            GameObject head = character.transform.Find("Geo").gameObject.transform.Find("Soldier_head").gameObject,
-                       body = character.transform.Find("Geo").gameObject.transform.Find("Soldier_body").gameObject;
+            GameObject head = characterObject.transform.Find("Geo").gameObject.transform.Find("Soldier_head").gameObject,
+                       body = characterObject.transform.Find("Geo").gameObject.transform.Find("Soldier_body").gameObject;
 
             if (characterType == CLOSE_QUARTERS)
             {
@@ -1254,7 +1227,6 @@ public class Gameplay : MonoBehaviour
                     SniperController controller = characterObject.AddComponent<SniperController>();
                     controller.isPlayer = _isPlayer;
                     controller.currentStandingTile = map[randomY][randomX];
-
                 }
                 else if (characterType == OPERATOR)
                 {
@@ -1282,7 +1254,8 @@ public class Gameplay : MonoBehaviour
                 players.Add(characterObject);
             else
             {
-                characterObject.layer = 15; // Set Layer To "Swat Enemy"
+                // Set Layer To "Swat Enemy"
+                // characterObject.layer = 15; 
 
                 // Get Spotlight
                 Light light = characterObject.transform.Find("Spotlight").gameObject.GetComponent<Light>();
@@ -1294,10 +1267,7 @@ public class Gameplay : MonoBehaviour
                 enemies.Add(characterObject);
 
                 // Don't Render Before Hitted By Swat Light
-                foreach (Renderer r in characterObject.GetComponentsInChildren<Renderer>())
-                {
-                    r.enabled = false;
-                }
+                UnrenderObject(characterObject);
             }
         }
 
@@ -1394,6 +1364,48 @@ public class Gameplay : MonoBehaviour
                 movesText.gameObject.SetActive(true);
                 isPaused = false;
             }
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        RaycastHit hittedEnemy;
+
+        if (selectedSwat != null)
+        {
+            if (Physics.SphereCast(selectedSwat.transform.position,
+                    50f,
+                    selectedSwat.transform.forward,
+                    out hittedEnemy,
+                    1000,
+                    LayerMask.GetMask("Swat")))
+            {
+
+                if (hittedEnemy.collider.gameObject.name == "swat(Clone)")
+                {
+                    GameObject characterObject = hittedEnemy.collider.gameObject;
+                    RenderObject(characterObject);
+                }
+            }
+        }
+    }
+
+    private void RenderObject(GameObject characterObject)
+    {
+        foreach (Renderer r in characterObject.GetComponentsInChildren<Renderer>())
+        {
+            //if (r.name == "PlayerNamePlaceholder")
+            r.enabled = true;
+        }
+
+        characterObject.transform.Find("PlayerNamePlaceHolder").gameObject.SetActive(false);
+    }
+
+    private void UnrenderObject(GameObject characterObject)
+    {
+        foreach (Renderer r in characterObject.GetComponentsInChildren<Renderer>())
+        {
+            r.enabled = false;
         }
     }
 }
